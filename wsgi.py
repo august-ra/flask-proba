@@ -1,4 +1,6 @@
-from flask import Flask, render_template
+from flask import Flask
+
+from utils.view_modifiers import use_template
 
 app = Flask(__name__)
 
@@ -13,8 +15,11 @@ def index(name: str = None):
 
 
 @app.route("/matrix")
+@use_template(filename="films.html")
 def matrix():
-    return render_template("films.html", films=get_matrix_films())
+    return {
+        "films": get_matrix_films(),
+    }
 
 
 def get_matrix_films():
