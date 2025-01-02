@@ -1,28 +1,8 @@
 from flask import request
 from flask_restful import Resource
 
-from src import api
-
-
-def get_matrix_films():
-    return [
-        {
-            "title": "The Matrix",
-            "year": 1999,
-        },
-        {
-            "title": "The Matrix Reloaded",
-            "year": 2003,
-        },
-        {
-            "title": "The Matrix Revolutions",
-            "year": 2003,
-        },
-        {
-            "title": "The Animatrix",
-            "year": 2003,
-        },
-    ]
+from src import api, db
+from src.models.film import Film
 
 
 def find_by_title(films, title):
@@ -36,23 +16,50 @@ def find_by_title(films, title):
 
 
 class Films(Resource):
-    def get(self, text: int | str = None):
-        films = get_matrix_films()
+    @staticmethod
+    def response_with_all_films():
+        films = db.session.query(Film).all()
+        films = [f.to_dict() for f in films]
+        return {"films": films}, 200
 
-        if text is None:
-            return {"films": films}, 200
-        elif isinstance(text, str):
-            return find_by_title(films, text)
-        elif not isinstance(text, int) or text <= 0 or text > len(films):
+    @staticmethod
+    def response_with_film(film: Film = None):
+        if film is None:
             return {"message": "Film not found"}, 404
         else:
-            return films[text + 1], 200
+            return film.to_dict(), 200
+
+    @staticmethod
+    def response_cannot_create():
+        return {"message": "Wrong data to add film"}, 400
+
+    def get(self, text: int | str = None):
+        if text is None:
+            return self.response_with_all_films()
+        elif isinstance(text, str):
+            film = db.session.query(Film).filter(Film.title.contains(text)).first()
+            return self.response_with_film(film)
+        elif isinstance(text, int):
+            film = db.session.query(Film).filter_by(id=text).first()
+            return self.response_with_film(film)
+        else:
+            return self.response_with_film()
 
     def post(self):
         data = request.json
-        films = get_matrix_films()
-        films.append(data)
-        return {"films": films}, 201
+
+        if not data:
+            return self.response_cannot_create()
+
+        try:
+            film = Film(**data)
+
+            db.session.add(film)
+            db.session.commit()
+        except (ValueError, KeyError):
+            return self.response_cannot_create()
+
+        return self.response_with_all_films()
 
 
 api.add_resource(Films, "/api/films", "/api/films/<int:text>", "/api/films/<text>", strict_slashes=False)
