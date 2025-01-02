@@ -50,7 +50,7 @@ class Films(Resource):
         data = request.json
         films = get_matrix_films()
         films.append(data)
-        return {"films": films}, 200
+        return {"films": films}, 201
 
 
 def add_routes(api):
