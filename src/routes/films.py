@@ -5,16 +5,6 @@ from src import api, db
 from src.models.film import Film
 
 
-def find_by_title(films, title):
-    films = filter(lambda f: title.lower() in f["title"].lower(), films)
-
-    try:
-        film = next(films)
-        return film, 200
-    except StopIteration:
-        return {"message": "Film not found"}, 404
-
-
 class Films(Resource):
     @staticmethod
     def response_with_all_films():
@@ -22,12 +12,15 @@ class Films(Resource):
         films = [f.to_dict() for f in films]
         return {"films": films}, 200
 
-    @staticmethod
-    def response_with_film(film: Film = None):
+    def response_with_film(self, film: Film = None):
         if film is None:
-            return {"message": "Film not found"}, 404
+            return self.response_cannot_find()
         else:
             return film.to_dict(), 200
+
+    @staticmethod
+    def response_cannot_find():
+        return {"message": "Film not found"}, 404
 
     @staticmethod
     def response_cannot_create():
@@ -37,6 +30,11 @@ class Films(Resource):
         if text is None:
             return self.response_with_all_films()
         elif isinstance(text, str):
+            film = db.session.query(Film).filter_by(uuid=text).first()
+
+            if film:
+                return film.to_dict(), 200
+
             film = db.session.query(Film).filter(Film.title.contains(text)).first()
             return self.response_with_film(film)
         elif isinstance(text, int):
@@ -58,6 +56,20 @@ class Films(Resource):
             db.session.commit()
         except (ValueError, KeyError):
             return self.response_cannot_create()
+
+        return self.response_with_all_films()
+
+    def delete(self, text: str = None):
+        if text is None:
+            return self.response_cannot_find()
+
+        film = db.session.query(Film).filter_by(uuid=text).first()
+
+        if film is None:
+            return self.response_cannot_find()
+
+        db.session.delete(film)
+        db.session.commit()
 
         return self.response_with_all_films()
 
