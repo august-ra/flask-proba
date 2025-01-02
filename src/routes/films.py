@@ -1,6 +1,8 @@
 from flask import request
 from flask_restful import Resource
 
+from src import api
+
 
 def get_matrix_films():
     return [
@@ -53,5 +55,4 @@ class Films(Resource):
         return {"films": films}, 201
 
 
-def add_routes(api):
-    api.add_resource(Films, "/api/films", "/api/films/<int:text>", "/api/films/<text>", strict_slashes=False)
+api.add_resource(Films, "/api/films", "/api/films/<int:text>", "/api/films/<text>", strict_slashes=False)
