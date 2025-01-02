@@ -22,17 +22,29 @@ def get_matrix_films():
     ]
 
 
+def find_by_title(films, title):
+    films = filter(lambda f: title.lower() in f["title"].lower(), films)
+
+    try:
+        film = next(films)
+        return film, 200
+    except StopIteration:
+        return {"message": "Film not found"}, 404
+
+
 class Films(Resource):
-    def get(self, uuid: int = None):
+    def get(self, text: int | str = None):
         films = get_matrix_films()
 
-        if uuid is None:
+        if text is None:
             return {"films": films}, 200
-        elif not isinstance(uuid, int) or uuid <= 0 or uuid > len(films):
+        elif isinstance(text, str):
+            return find_by_title(films, text)
+        elif not isinstance(text, int) or text <= 0 or text > len(films):
             return {"message": "Film not found"}, 404
         else:
-            return films[uuid + 1], 200
+            return films[text + 1], 200
 
 
 def add_routes(api):
-    api.add_resource(Films, "/api/films", "/api/films/<int:uuid>", "/api/films/<uuid>", strict_slashes=False)
+    api.add_resource(Films, "/api/films", "/api/films/<int:text>", "/api/films/<text>", strict_slashes=False)
