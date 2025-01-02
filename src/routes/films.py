@@ -1,3 +1,4 @@
+from flask import request
 from flask_restful import Resource
 
 
@@ -44,6 +45,12 @@ class Films(Resource):
             return {"message": "Film not found"}, 404
         else:
             return films[text + 1], 200
+
+    def post(self):
+        data = request.json
+        films = get_matrix_films()
+        films.append(data)
+        return {"films": films}, 200
 
 
 def add_routes(api):
