@@ -8,18 +8,18 @@ from src.schemas.film import FilmSchema
 
 
 class Films(Resource):
-    film_schema = FilmSchema()
+    schema = FilmSchema()
 
     def response_with_all_films(self):
         films = db.session.query(Film).all()
-        films = self.film_schema.dump(films, many=True)
+        films = self.schema.dump(films, many=True)
         return {"films": films}, 200
 
     def response_with_film(self, film: Film = None):
         if film is None:
             return self.response_cannot_find()
         else:
-            return self.film_schema.dump(film), 200
+            return self.schema.dump(film), 200
 
     @staticmethod
     def response_cannot_find():
@@ -50,7 +50,7 @@ class Films(Resource):
         data = request.json
 
         try:
-            film = self.film_schema.load(data, session=db.session)
+            film = self.schema.load(data, session=db.session)
         except ValidationError as error:
             return {"message": str(error)}, 400
 

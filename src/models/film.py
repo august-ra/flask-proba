@@ -9,7 +9,7 @@ class Film(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(120), nullable=False)
     year = db.Column(db.Integer, nullable=False, index=True)
-    uuid = db.Column(db.String(36), nullable=False, unique=True)
+    uuid = db.Column(db.String(36), unique=True)
 
     def __init__(self, title, year):
         self.title = title

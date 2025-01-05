@@ -7,5 +7,3 @@ class FilmSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Film
         load_instance = True
-
-    uuid = auto_field(dump_only=True)
