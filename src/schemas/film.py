@@ -1,4 +1,4 @@
-from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow_sqlalchemy import auto_field, SQLAlchemyAutoSchema
 
 from src.models.film import Film
 
@@ -6,5 +6,6 @@ from src.models.film import Film
 class FilmSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Film
-        exclude = ["id", "uuid"]
         load_instance = True
+
+    uuid = auto_field(dump_only=True)
