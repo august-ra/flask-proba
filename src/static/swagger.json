@@ -1,0 +1,267 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "description": "An example code",
+    "title": "Flask Proba",
+    "termsOfService": "http://swagger.io/terms/",
+    "contact": {
+      "email": "august-ra@ya.ru"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/icenses/MIT"
+    },
+    "version": "1.0.0"
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  },
+  "servers": [
+    {
+      "url": "/api/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "film",
+      "description": "An example API for working with films"
+    }
+  ],
+  "paths": {
+    "/films": {
+      "get": {
+        "tags": [
+          "film"
+        ],
+        "summary": "Return all films",
+        "description": "Return all films from db",
+        "operationId": "getAllFilms",
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Film"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "film"
+        ],
+        "summary": "Add a new film into db",
+        "description": "Add a new film into db",
+        "operationId": "addFilm",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/requestBodies/DataForNewFilm"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Film"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Wrong data to add film",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/films/{uuid}": {
+      "get": {
+        "tags": [
+          "film"
+        ],
+        "summary": "Get a film by UUID",
+        "description": "Get a film from db by UUID",
+        "operationId": "getFilmByUUID",
+        "parameters": [
+          {
+            "name": "uuid",
+            "in": "path",
+            "required": true,
+            "description": "Film UUID",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Film"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Film not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "film"
+        ],
+        "summary": "Delete a film by UUID",
+        "description": "Delete a film from db by UUID",
+        "operationId": "deleteFilmByUUID",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/UUID"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Film"
+                  }
+                }
+              },
+              "application/x-yaml": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Film"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Film not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SimpleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "UUID": {
+        "name": "uuid",
+        "in": "path",
+        "required": true,
+        "description": "Film UUID",
+        "schema": {
+          "type": "string",
+          "example": "7521d74a-4fb6-4f2c-882e-22389922f51c"
+        }
+      }
+    },
+    "schemas": {
+      "SimpleResponse": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "Film": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "example": 100000
+          },
+          "title": {
+            "type": "string",
+            "example": "Triangle"
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32",
+            "example": 2025
+          },
+          "uuid": {
+            "type": "string",
+            "format": "string",
+            "example": "7521d74a-4fb6-4f2c-882e-22389922f51c"
+          }
+        }
+      }
+    },
+    "requestBodies": {
+      "DataForNewFilm": {
+        "description": "Data for adding a new film",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "title": {
+                  "type": "string",
+                  "example": "Triangle"
+                },
+                "year": {
+                  "type": "integer",
+                  "format": "int32",
+                  "example": 2025
+                }
+              },
+              "required": [
+                "title",
+                "year"
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
