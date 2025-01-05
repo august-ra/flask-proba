@@ -1,22 +1,25 @@
 from flask import request
 from flask_restful import Resource
+from marshmallow import ValidationError
 
-from src import api, db
+from src import db
 from src.models.film import Film
+from src.schemas.film import FilmSchema
 
 
 class Films(Resource):
-    @staticmethod
-    def response_with_all_films():
+    schema = FilmSchema()
+
+    def response_with_all_films(self):
         films = db.session.query(Film).all()
-        films = [f.to_dict() for f in films]
+        films = self.schema.dump(films, many=True)
         return {"films": films}, 200
 
     def response_with_film(self, film: Film = None):
         if film is None:
             return self.response_cannot_find()
         else:
-            return film.to_dict(), 200
+            return self.schema.dump(film), 200
 
     @staticmethod
     def response_cannot_find():
@@ -46,16 +49,13 @@ class Films(Resource):
     def post(self):
         data = request.json
 
-        if not data:
-            return self.response_cannot_create()
-
         try:
-            film = Film(**data)
+            film = self.schema.load(data, session=db.session)
+        except ValidationError as error:
+            return {"message": str(error)}, 400
 
-            db.session.add(film)
-            db.session.commit()
-        except (ValueError, KeyError):
-            return self.response_cannot_create()
+        db.session.add(film)
+        db.session.commit()
 
         return self.response_with_all_films()
 
@@ -72,6 +72,3 @@ class Films(Resource):
         db.session.commit()
 
         return self.response_with_all_films()
-
-
-api.add_resource(Films, "/api/films", "/api/films/<int:text>", "/api/films/<text>", strict_slashes=False)

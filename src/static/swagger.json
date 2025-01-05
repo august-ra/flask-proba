@@ -57,17 +57,11 @@
         "tags": [
           "film"
         ],
-        "summary": "Add a new film into db",
+        "summary": "Add a new film",
         "description": "Add a new film into db",
         "operationId": "addFilm",
         "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/requestBodies/DataForNewFilm"
-              }
-            }
-          }
+          "$ref": "#/components/requestBodies/FilmBody"
         },
         "responses": {
           "200": {
@@ -106,13 +100,7 @@
         "operationId": "getFilmByUUID",
         "parameters": [
           {
-            "name": "uuid",
-            "in": "path",
-            "required": true,
-            "description": "Film UUID",
-            "schema": {
-              "type": "string"
-            }
+            "$ref": "#/components/parameters/UUID"
           }
         ],
         "responses": {
@@ -237,8 +225,9 @@
       }
     },
     "requestBodies": {
-      "DataForNewFilm": {
+      "FilmBody": {
         "description": "Data for adding a new film",
+        "required": true,
         "content": {
           "application/json": {
             "schema": {

@@ -9,6 +9,7 @@ flask-migrate = "*"
 flask-restful = "*"
 flask-sqlalchemy = "*"
 flask-swagger-ui = "*"
+marshmallow-sqlalchemy = "*"
 requests = "*"
 
 [dev-packages]

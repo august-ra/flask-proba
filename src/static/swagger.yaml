@@ -35,7 +35,7 @@ paths:
         '200':
           description: Successful operation
           content:
-            application/json:
+            'application/json':
               schema:
                 type: array
                 items:
@@ -47,15 +47,12 @@ paths:
       description: Add a new film into db
       operationId: addFilm
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/requestBodies/DataForNewFilm'
+        $ref: '#/components/requestBodies/FilmBody'
       responses:
         '200':
           description: Successful operation
           content:
-            application/json:
+            'application/json':
               schema:
                 type: array
                 items:
@@ -63,7 +60,7 @@ paths:
         '400':
           description: Wrong data to add film
           content:
-            application/json:
+            'application/json':
               schema:
                 $ref: '#/components/schemas/SimpleResponse'
   /films/{uuid}:
@@ -74,12 +71,12 @@ paths:
       description: Get a film from db by UUID
       operationId: getFilmByUUID
       parameters:
-        - $ref: '#/components/parameters/uuid'
+        - $ref: '#/components/parameters/UUID'
       responses:
         '200':
           description: Successful operation
           content:
-            application/json:
+            'application/json':
               schema:
                 type: array
                 items:
@@ -87,7 +84,7 @@ paths:
         '404':
           description: Film not found
           content:
-            application/json:
+            'application/json':
               schema:
                 $ref: '#/components/schemas/SimpleResponse'
     delete:
@@ -97,17 +94,17 @@ paths:
       description: Delete a film from db by UUID
       operationId: deleteFilmByUUID
       parameters:
-        - $ref: '#/components/parameters/uuid'
+        - $ref: '#/components/parameters/UUID'
       responses:
         '200':
           description: Successful operation
           content:
-            application/json:
+            'application/json':
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Film'
-            application/x-yaml:
+            'application/x-yaml':
               schema:
                 type: array
                 items:
@@ -115,25 +112,26 @@ paths:
         '404':
           description: Film not found
           content:
-            application/json:
+            'application/json':
               schema:
                 $ref: '#/components/schemas/SimpleResponse'
 components:
   parameters:
-    uuid:
+    UUID:
       name: uuid
       in: path
       required: true
       description: Film UUID
       schema:
         type: string
+        example: '7521d74a-4fb6-4f2c-882e-22389922f51c'
   schemas:
     SimpleResponse:
       type: object
       properties:
         message:
           type: string
-          example: Film not found
+          example: 'Film not found'
     Film:
       type: object
       properties:
@@ -150,13 +148,13 @@ components:
           example: 2025
         uuid:
           type: string
-          format: string
           example: '7521d74a-4fb6-4f2c-882e-22389922f51c'
   requestBodies:
-    DataForNewFilm:
+    FilmBody:
       description: Data for adding a new film
+      required: true
       content:
-        application/json:
+        'application/json':
           schema:
             type: object
             properties:
