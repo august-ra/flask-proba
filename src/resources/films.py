@@ -2,8 +2,9 @@ from flask import request
 from flask_restful import Resource
 from marshmallow import ValidationError
 
-from src import api, db
+from src import db
 from src.models.film import Film
+from src.schemas.film import FilmSchema
 
 
 class Films(Resource):
@@ -71,6 +72,3 @@ class Films(Resource):
         db.session.commit()
 
         return self.response_with_all_films()
-
-
-api.add_resource(Films, "/api/films", "/api/films/<int:text>", "/api/films/<text>", strict_slashes=False)
